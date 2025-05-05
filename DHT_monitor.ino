@@ -12,14 +12,14 @@ char daysOfTheWeek[7][12] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thurs
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0);
 
 // ---------- Replace with your WiFi and Adafruit IO credentials ----------
-#define WIFI_SSID "your_wifi_ssid"
-#define WIFI_PASS "your_wifi_password"
-#define IO_USERNAME "your_adafruit_io_username"
-#define IO_KEY "your_adafruit_io_key"
+#define WIFI_SSID "saran"
+#define WIFI_PASS "123456789"
+#define IO_USERNAME "saraann"
+#define IO_KEY "aio_TgUA55Mjqf1dhIZFGdVKgZs7uqTr"
 
 // ---------------- ESP32 Pins & DHT11 Setup ----------------
-#define DHTPIN 2
-#define DHTTYPE DHT22
+#define DHTPIN D0
+#define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
 
 // ----------- Adafruit IO Feed Setup --------------
@@ -45,7 +45,7 @@ void setup() {
 
 
 
-  if (!SD.begin(D2)) {
+  if (!SD.begin(D7)) {
     Serial.println("SD Card Initialization Failed!");
     u8g2.drawStr(3, 30, "SD Failed");
     u8g2.sendBuffer();
@@ -97,7 +97,7 @@ void loop() {
     delay(2000); // Wait and try again
     return;
   }
-  readTime();
+  
 
   temperatureString = String(t, 2);
   humidityString = String(h, 2);
@@ -110,21 +110,21 @@ void loop() {
   Serial.println(" %");
   u8g2.clearBuffer();
   u8g2.setFont(u8g2_font_ncenB10_tr);
-  u8g2.setCursor(0, 20);
+  u8g2.setCursor(4, 30);
   u8g2.print("Temp: ");
   u8g2.print(temperatureString);
   u8g2.print(" C");
-  u8g2.setCursor(0, 40);
+  u8g2.setCursor(4, 45);
   u8g2.print("Hum: ");
   u8g2.print(humidityString);
   u8g2.print(" %");
   u8g2.sendBuffer();
-
+  readTime(); 
   // Send data to Adafruit IO
   temperature_feed->save(t);
   humidity_feed->save(h);
   logSDCard();
-  delay(2000);
+  delay(400);
 }
 
 void readTime() {
@@ -146,9 +146,9 @@ void readTime() {
   timeStamp = String(now.day()) + "/" + String(now.month()) + "/" + String(now.year()) + "," + String(now.hour()) + ":" + String(now.minute()) + ":" + String(now.second()) + ",";
   const char* ts = timeStamp.c_str();
 
-  u8g2.setFont(u8g2_font_ncenB08_tr);
-  u8g2.drawStr(0, 10, ts);  // Adjusted position for time on the smaller display
+  u8g2.drawStr(6, 12, ts);   // Adjusted position for time on the smaller display
   u8g2.sendBuffer();
+
 }
 
 void logSDCard() {
@@ -157,7 +157,7 @@ void logSDCard() {
   Serial.println(dataMessage);
   appendFile(SD, "/dhtdata.txt", dataMessage.c_str());
   u8g2.setFont(u8g2_font_ncenB08_tr);
-  u8g2.drawStr(80, 40, "SD write");
+  u8g2.drawStr(5, 60, "SD appending");
   u8g2.sendBuffer();
   delay(1000);
   u8g2.clearBuffer();
