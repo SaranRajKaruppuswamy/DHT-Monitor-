@@ -18,15 +18,14 @@ U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0);
 #define IO_KEY "your_adafruit_io_key"
 
 // ---------------- ESP32 Pins & DHT11 Setup ----------------
-#define DHTPIN D0   // Connect DHT11 data pin to D0 on XIAO ESP32 S3
-#define DHTTYPE DHT11  // Type of DHT sensor (DHT11, DHT22, or AM2302)
+#define DHTPIN 2
+#define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
 
 // ----------- Adafruit IO Feed Setup --------------
 AdafruitIO_WiFi io(IO_USERNAME, IO_KEY, WIFI_SSID, WIFI_PASS);
-AdafruitIO_Feed *temperature_feed = io.feed("temperature");  // Create these feeds on Adafruit IO
+AdafruitIO_Feed *temperature_feed = io.feed("temperature");
 AdafruitIO_Feed *humidity_feed = io.feed("humidity");
-
 String dataMessage;
 String timeStamp;
 String temperatureString = "";
@@ -36,10 +35,10 @@ void setup() {
   Serial.begin(115200);
   Wire.begin();
   u8g2.begin();
-  dht.begin();  // Initialize DHT sensor
+  dht.begin();
 
 
-  u8g2.clearBuffer();         // clear the internal memory
+  u8g2.clearBuffer();
   u8g2.setFont(u8g2_font_ncenB10_tr); // choose a suitable font
   u8g2.drawStr(3, 15, "Initializing");
   u8g2.sendBuffer();
@@ -100,8 +99,8 @@ void loop() {
   }
   readTime();
 
-  temperatureString = String(t, 2); // Format temperature to 2 decimal places
-  humidityString = String(h, 2);    // Format humidity to 2 decimal places
+  temperatureString = String(t, 2);
+  humidityString = String(h, 2);
 
   Serial.print("Temperature: ");
   Serial.print(temperatureString);
